@@ -1,0 +1,12 @@
+[
+  { "name": "Blush", "ufUrl": "blush", "rawName": "blush" },
+  { "name": "Bronzer", "ufUrl": "bronzer", "rawName": "bronzer" },
+  { "name": "Eyebrow", "ufUrl": "eyebrow", "rawName": "eyebrow" },
+  { "name": "Eyeliner", "ufUrl": "eyeliner", "rawName": "eyeliner" },
+  { "name": "Eyeshadow", "ufUrl": "eyeshadow", "rawName": "eyeshadow" },
+  { "name": "Foundation", "ufUrl": "foundation", "rawName": "foundation" },
+  { "name": "Lip liner", "ufUrl": "lip-liner", "rawName": "lip_liner" },
+  { "name": "Lipstick", "ufUrl": "lipstick", "rawName": "lipstick" },
+  { "name": "Mascara", "ufUrl": "mascara", "rawName": "mascara" },
+  { "name": "Nail polish", "ufUrl": "nail-polish", "rawName": "nail_polish" }
+]
