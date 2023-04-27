@@ -2,6 +2,8 @@ import { FC } from 'react';
 import { FaRegHeart } from 'react-icons/fa';
 import { addToCart } from '../api/cart';
 import toast, { Toaster } from 'react-hot-toast';
+import useGlobal from '../hooks/useGlobal';
+import { $user } from '../states/user';
 
 type Props = {
   products: {
@@ -16,31 +18,36 @@ type Props = {
 const ProductListItemBlock: FC<Props> = ({ products }) => {
   const addToCartHandler = (id: string) => {
     addToCart(id, 1);
-    toast.success('Successfully added to your cart!');
+    if (user) toast.success('Item added to your shopping cart!');
+    else toast.error('You must log in to add an item to your cart!');
   };
+
+  const user = useGlobal($user);
 
   return (
     <>
-      <div className='category_list_container'>
+      <div className='product_list_container'>
         {products.map((product) => (
-          <>
-            <div className='category_list_item' key={product._id}>
-              <a href={`/product/${product._id}`}>
-                <img src={product.api_featured_image} alt='category product' />
-                {product.name}
-                <div>{`${product.price_sign}${product.price}`}</div>
-              </a>
-              <div className='wishlist_heart'>
-                <FaRegHeart />
+          <div className='product_list_item' key={product._id}>
+            <a href={`/product/${product._id}`}>
+              <div className='product_list_item_image_container'>
+                <img src={product.api_featured_image} alt='product image' />
               </div>
-              <div
-                className='button'
-                onClick={() => addToCartHandler(product._id)}>
-                ADD TO CART
-              </div>
+              <div className='product_list_item_name'>{product.name}</div>
+              <div className='product_list_item_price'>{`${product.price_sign}${product.price}`}</div>
+            </a>
+            <div className='wishlist_heart'>
+              <FaRegHeart />
             </div>
-          </>
+            <div
+              className='button'
+              onClick={() => addToCartHandler(product._id)}>
+              ADD TO CART
+            </div>
+          </div>
         ))}
+        <div className='product_list_item'></div>
+        <div className='product_list_item'></div>
       </div>
       <Toaster />
     </>

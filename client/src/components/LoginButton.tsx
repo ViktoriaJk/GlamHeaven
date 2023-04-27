@@ -6,6 +6,7 @@ import { login, logout } from '../states/user';
 import { FaUserCircle, FaRegHeart, FaRegUserCircle } from 'react-icons/fa';
 import { MdOutlineLocalShipping, MdLogout } from 'react-icons/md';
 import { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 // type Props = {
 //   children: ReactNode;
@@ -15,6 +16,10 @@ const LoginButton: FC = () => {
   const url = googleUrl();
   const user = useGlobal($user);
   const [isShown, setIsShown] = useState(false);
+
+  const toastCall = () => {
+    return toast.success('You have successfully logged out!');
+  };
 
   return (
     <>
@@ -63,7 +68,12 @@ const LoginButton: FC = () => {
                 </span>
                 Wishlist
               </a>
-              <a href={'#'} onClick={logout}>
+              <a
+                href={'#'}
+                onClick={() => {
+                  logout();
+                  toastCall();
+                }}>
                 <span>
                   <MdLogout />
                 </span>
@@ -73,6 +83,7 @@ const LoginButton: FC = () => {
           </div>
         </>
       )}
+      <Toaster />
     </>
   );
 };

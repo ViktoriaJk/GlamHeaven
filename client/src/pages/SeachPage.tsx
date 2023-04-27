@@ -29,7 +29,7 @@ const SearchPage = () => {
     <>
       {products ? (
         <>
-          <h1 id='category_name'>Results for “{query}”</h1>
+          <h1 id='category_name'>Search results for “{query}”</h1>
           <p id='category_result'>{products.length} results</p>
           {loading && <Loader />}
           <ProductListItemBlock products={products} />
