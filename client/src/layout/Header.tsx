@@ -16,8 +16,19 @@ const Navbar: FC = () => {
 
   const navigate = useNavigate();
 
+  const [scroll, setScroll] = useState<boolean>(true);
+
+  useEffect(() => {
+    document.addEventListener('scroll', () => {
+      const scrollCheck = window.scrollY > 70;
+      if (scrollCheck !== scroll) {
+        setScroll(scrollCheck);
+      }
+    });
+  });
+
   return (
-    <header>
+    <header className={`${scroll && 'header--shadow'}`}>
       <div className='header_container'>
         <div className='header_logo' onClick={() => navigate('/')}>
           {' '}

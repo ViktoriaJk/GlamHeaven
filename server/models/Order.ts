@@ -9,7 +9,7 @@ const orderSchema = new Schema({
   },
   products: [
     {
-      id: {
+      productId: {
         type: Schema.Types.ObjectId,
         ref: 'Product',
         required: true,
@@ -32,58 +32,67 @@ const orderSchema = new Schema({
     type: Number,
     required: true,
   },
-  invoiceAddress: [
-    {
-      zipCode: {
-        type: String,
-        required: true,
-      },
-      street: {
-        type: String,
-        required: true,
-      },
-      houseNumber: {
-        type: String,
-        required: true,
-      },
-      country: {
-        type: String,
-        required: true,
-      },
+  invoiceAddress: {
+    zipCode: {
+      type: String,
+      required: true,
     },
-  ],
-  deliveryAddress: [
-    {
-      zipCode: {
-        type: String,
-        required: true,
-      },
-      street: {
-        type: String,
-        required: true,
-      },
-      houseNumber: {
-        type: String,
-        required: true,
-      },
-      country: {
-        type: String,
-        required: true,
-      },
+    city: {
+      type: String,
+      required: true,
     },
-  ],
-  phoneNumber: {
-    type: String,
-    required: true,
+    street: {
+      type: String,
+      required: true,
+    },
+    houseNumber: {
+      type: String,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
   },
-  deliveryOption: {
-    type: Number,
-    required: true,
+
+  deliveryAddress: {
+    zipCode: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    street: {
+      type: String,
+      required: true,
+    },
+    houseNumber: {
+      type: String,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
   },
-  paymentMethod: {
-    type: Number,
-    required: true,
+
+  details: {
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
+    deliveryOption: {
+      type: Number,
+      required: true,
+    },
+    paymentMethod: {
+      type: Number,
+      required: true,
+    },
   },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -91,4 +100,4 @@ const orderSchema = new Schema({
 });
 
 export type OrderType = InferSchemaType<typeof orderSchema>;
-export const Order = mongoose.model('Category', orderSchema);
+export const Order = mongoose.model('Order', orderSchema);

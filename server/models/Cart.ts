@@ -6,6 +6,7 @@ const cartSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+    unique: true,
   },
   products: [
     {
@@ -19,8 +20,22 @@ const cartSchema = new Schema({
         default: 1,
         required: true,
       },
+      unitPrice: {
+        type: Number,
+        default: 0,
+        required: true,
+      },
+      totalPrice: {
+        type: Number,
+        default: 0,
+        required: true,
+      },
     },
   ],
+  totalCartPrice: {
+    type: Number,
+    required: true,
+  },
 });
 
 export type CartType = InferSchemaType<typeof cartSchema>;

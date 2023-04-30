@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { Order } from '../models/Order';
 import { User } from '../models/User';
+import { Cart } from '../models/Cart';
 import { z } from 'zod';
 import mongoose from 'mongoose';
 import { verifyToken } from '../middlewares/verifyToken';
@@ -8,174 +9,67 @@ import { verifySchema } from '../middlewares/verifySchema';
 
 const router = express.Router();
 
-const orderProductSchema = z.object({
-  id: z.string().nonempty(),
-  unitPrice: z.number().positive(),
-  quantity: z.number().positive(),
-  totalPrice: z.number().positive(),
-});
-
-const orderSchema = z.object({
-  userId: z.string().nonempty(),
-  products: z.array(orderProductSchema).nonempty(),
-  totalOrderPrice: z.number().positive(),
-  invoiceAddress: z.array(
-    z.object({
+const orderFormDataSchema = z.object({
+  orderFormData: z.object({
+    invoiceAddress: z.object({
       zipCode: z.string().nonempty(),
+      city: z.string().nonempty(),
       street: z.string().nonempty(),
       houseNumber: z.string().nonempty(),
       country: z.string().nonempty(),
-    })
-  ),
-  deliveryAddress: z.array(
-    z.object({
+    }),
+    deliveryAddress: z.object({
       zipCode: z.string().nonempty(),
+      city: z.string().nonempty(),
       street: z.string().nonempty(),
       houseNumber: z.string().nonempty(),
       country: z.string().nonempty(),
-    })
-  ),
-  phoneNumber: z.string().nonempty(),
-  deliveryOption: z.number().nonnegative(),
-  paymentMethod: z.number().nonnegative(),
-  createdAt: z.date(),
+    }),
+    details: z.object({
+      phoneNumber: z.string().nonempty(),
+      deliveryOption: z.string().nonempty(),
+      paymentMethod: z.string().nonempty(),
+    }),
+  }),
 });
 
-type Order = z.infer<typeof orderSchema>;
+type OrderType = z.infer<typeof orderFormDataSchema>;
 
-// router.get('/', verifyToken, async (req: Request, res: Response) => {
-//   const user = res.locals.user;
-//   const foundUser = await User.findById(user._id);
+router.post(
+  '/',
+  verifySchema(orderFormDataSchema),
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const user = res.locals.user;
+    const foundUser = await User.findById(user._id);
 
-//   if (!foundUser) {
-//     return res.status(400).json({ message: 'User not found.' });
-//   }
+    if (!foundUser) {
+      return res.status(400).json({ message: 'User not found.' });
+    }
 
-//   const foundCart = await Cart.findOne({ userId: user._id }).populate(
-//     'products',
-//     'name price product_link'
-//   );
+    const foundCart = await Cart.findOne({ userId: user._id });
 
-//   res.sendStatus(200).json(foundCart);
-// });
+    if (!foundCart) {
+      return res.status(400).json({ message: 'Cart not found.' });
+    }
 
-// ADD ITEM
-/*router.post('/', verifyToken, async (req: Request, res: Response) => {
-  const user = res.locals.user;
-  const foundUser = await User.findById(user._id);
+    const orderData = req.body.orderFormData;
 
-  if (!foundUser) {
-    return res.status(400).json({ message: 'User not found.' });
-  }
-
-  const { productId, quantity } = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(422).json('Invalid product id.');
-  }
-
-  const foundCart = await Cart.findOne({ userId: user._id });
-  if (!foundCart) {
-    const cart = await Cart.create<Cart>({
+    const newOrder = await Order.create({
       userId: user._id,
-      products: [{ id: productId, quantity: quantity }],
+      products: foundCart.products,
+      totalOrderPrice: 0,
+      invoiceAddress: orderData.invoiceAddress,
+      deliveryAddress: orderData.deliveryAddress,
+      details: orderData.details,
     });
-    res.sendStatus(200).json(cart);
-  } else {
-    const productInCartIndex = foundCart.products.findIndex(
-      (prod) => prod.id === productId
-    );
 
-    if (productInCartIndex > -1) {
-      foundCart.products[productInCartIndex].quantity += quantity;
+    if (newOrder) {
+      return res.status(200).json({ message: 'OK.' });
     } else {
-      foundCart.products = [
-        ...foundCart.products,
-        { id: productId, quantity: quantity },
-      ];
+      return res.status(404).json({ message: 'Order error.' });
     }
-
-    const cart = await Cart.findOneAndUpdate(
-      { userId: user._id },
-      { $set: { products: foundCart.products } }
-    );
-    res.sendStatus(200).json(cart);
   }
-  res.sendStatus(400);
-});
-
-// REMOVE ITEM
-router.delete('/', verifyToken, async (req: Request, res: Response) => {
-  const user = res.locals.user;
-  const foundUser = await User.findById(user._id);
-
-  if (!foundUser) {
-    return res.status(400).json({ message: 'User not found.' });
-  }
-
-  const { productId } = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(422).json('Invalid product id.');
-  }
-
-  const foundCart = await Cart.findOne({ userId: user._id });
-  if (foundCart) {
-    const productInCartIndex = foundCart.products.findIndex(
-      (prod) => prod.id === productId
-    );
-
-    if (productInCartIndex > -1) {
-      // only splice array when item is found
-      foundCart.products.splice(productInCartIndex, 1); // 2nd parameter means remove one item only
-    }
-
-    const cart = await Cart.findOneAndUpdate(
-      { userId: user._id },
-      { $set: { products: foundCart.products } }
-    );
-    res.sendStatus(200).json(cart);
-  }
-  res.sendStatus(400);
-});
-
-// UPDATE ITEM
-router.put('/', verifyToken, async (req: Request, res: Response) => {
-  const user = res.locals.user;
-  const foundUser = await User.findById(user._id);
-
-  if (!foundUser) {
-    return res.status(400).json({ message: 'User not found.' });
-  }
-
-  const { productId, quantity } = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(422).json('Invalid product id.');
-  }
-
-  const foundCart = await Cart.findOne({ userId: user._id });
-  if (foundCart) {
-    const productInCartIndex = foundCart.products.findIndex(
-      (prod) => prod.id === productId
-    );
-
-    if (productInCartIndex > -1) {
-      if (quantity === 0) {
-        foundCart.products.splice(productInCartIndex, 1);
-      } else {
-        foundCart.products[productInCartIndex].quantity = quantity;
-      }
-    }
-
-    const cart = await Cart.findOneAndUpdate(
-      { userId: user._id },
-      { $set: { products: foundCart.products } }
-    );
-    res.sendStatus(200).json(cart);
-  }
-  res.sendStatus(400);
-});
-*/
+);
 
 export default router;

@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config({
+  path: '../.env',
+});
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
 import { getIdToken } from '../api/google';
@@ -49,7 +53,6 @@ router.post(
     const data: UserType = { ...result, favourites: [] };
 
     const foundUser = await User.findOne({ sub: data.sub });
-    console.log(foundUser);
     if (!foundUser) {
       const newUser = await User.create(data);
       const parseResult = safeParse(Payload, newUser);

@@ -15,9 +15,11 @@ const productSchema = new Schema({
   },
   price: {
     type: Number,
+    required: true,
   },
   price_sign: {
     type: String,
+    required: true,
   },
   currency: {
     type: String,

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, createContext } from 'react';
 import { FaRegHeart } from 'react-icons/fa';
 import { addToCart } from '../api/cart';
 import toast, { Toaster } from 'react-hot-toast';

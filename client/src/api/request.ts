@@ -19,14 +19,14 @@ export const request = async <T extends z.ZodTypeAny>(
   schema: T
 ): Promise<Response<z.infer<T>>> => {
   try {
-    client.request({
+    /*client.request({
       method,
       url: path,
       data: payload,
       headers: {
         Authorization: `Bearer: ${localStorage.getItem('token')}`,
       },
-    });
+    });*/
     const response = await client.request({
       method,
       url: path,

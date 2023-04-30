@@ -50,8 +50,8 @@ body,
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
-  max-width: 1200px;
-  background-color: #f1cdff;
+  max-width: 1000px;
+  background-color: var(--color-a);
   margin: 0 auto;
   padding-top: 60px;
   letter-spacing: 0.8px;
@@ -59,14 +59,17 @@ body,
 }
 
 header {
-  background-color: #e4b8f5;
+  background-color: var(--color-a);
   position: fixed;
+  transition: 0.3s;
   top: 0;
   left: 0;
   width: 100%;
-  border-bottom: 2px solid #111;
-  box-shadow: 0 0 8px 0 #666;
   z-index: 100;
+}
+
+.header--shadow {
+  box-shadow: 0 0 8px 0 #666;
 }
 
 .header_container {
@@ -75,7 +78,7 @@ header {
   align-items: center;
   justify-content: space-between;
   margin: 0 auto;
-  max-width: 1200px;
+  max-width: 1000px;
   padding: 10px 20px;
 }
 
@@ -130,7 +133,7 @@ footer {
 
 main {
   flex: 1;
-  min-height: 2000px;
+  min-height: 1000px;
   border-radius: 8px;
 }
 
@@ -335,8 +338,8 @@ button span {
 }
 
 .product_list_item {
-  flex: 1 0 30%;
-  width: 200px;
+  flex: 1 0 23%;
+  min-width: 200px;
   position: relative;
 }
 
@@ -378,7 +381,7 @@ button span {
   position: absolute;
   width: 40px;
   height: 40px;
-  background-color: #fff;
+  background-color: var(--color-a);
   top: 5px;
   right: 5px;
   border-radius: 50%;

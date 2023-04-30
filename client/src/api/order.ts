@@ -25,36 +25,39 @@ const productSchema = z.object({
 const CartSchema = z.object({
   userId: z.string().nonempty({ message: 'The product id is required.' }),
   products: z.array(productSchema),
-  totalCartPrice: z.number(),
 });
 
 export type CartType = z.infer<typeof CartSchema>;
 
-export const getCart = async () => {
-  const response = await request('get', `/api/cart`, {}, CartSchema);
-  return response;
+/* order */
+
+type orderDetails = {
+  invoiceAddress: {
+    zipCode: string;
+    city: string;
+    street: string;
+    houseNumber: string;
+    country: string;
+  };
+  deliveryAddress: {
+    zipCode: string;
+    city: string;
+    street: string;
+    houseNumber: string;
+    country: string;
+  };
+  details: {
+    phoneNumber: string;
+    deliveryOption: number;
+    paymentMethod: number;
+  };
 };
 
-export const addToCart = async (productId: string, quantity: number) => {
+export const saveOrder = async (orderFormData: orderDetails) => {
   const response = await request(
     'post',
-    `/api/cart`,
-    { productId, quantity },
-    CartSchema
-  );
-  return response;
-};
-
-export const updateInCart = async () => {
-  const response = await request('put', `/api/cart`, {}, CartProductListSchema);
-  return response;
-};
-
-export const deleteFromCart = async (productId: string) => {
-  const response = await request(
-    'delete',
-    `/api/cart`,
-    { productId },
+    `/api/order`,
+    { orderFormData },
     CartSchema
   );
   return response;
