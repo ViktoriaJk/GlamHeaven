@@ -1,0 +1,542 @@
+openapi: 3.0.3
+info:
+  title: GlamHeaven Makeup Webshop API
+  description: |-
+    This is a GlamHeaven Makeup Webshop API documentation.
+    [GitHub Repository](https://github.com/ViktoriaJk/GlamHeaven)
+  version: '1.0'
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8000/api
+tags:
+  - name: search
+  - name: product
+  - name: login
+  - name: categories
+  - name: category
+  - name: cart
+  - name: order
+paths:
+  /search/{query}:
+    get:
+      tags:
+        - search
+      summary: Search products.
+      description: Returns products based on search query.
+      parameters:
+        - name: query
+          in: path
+          description: The search query.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request. Minimum 3 characters must be provided.
+        '404':
+          description: No products found.
+        '500':
+          description: Internal server error.
+
+  /product/{id}:
+    get:
+      tags:
+        - product
+      summary: Get a product by ID.
+      description: Returns a product that matches the given ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to retrieve.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found.
+        '422':
+          description: Invalid id.
+        '500':
+          description: Internal server error.
+  /cart:
+    get:
+      tags:
+        - cart
+      summary: Get cart content.
+      description: Returns a user's cart content.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
+        '400':
+          description: User not found.
+        '404':
+          description: Your cart is empty.
+        '500':
+          description: Internal server error.
+    post:
+      tags:
+        - cart
+      summary: Add product(s) to cart.
+      description: Returns the cart content.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                  example: 734zhfhftzhtghgj9375g
+                quantity:
+                  type: number
+                  example: 2
+      responses:
+        '200':
+          description: Cart created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    example: 45ztfdtuzhgf874z
+                  productId:
+                    type: string
+                    example: 734zhfhftzhtghgj9375g
+                  quantity:
+                    type: number
+                    example: 2
+                  unitPrice:
+                    type: number
+                    example: 34
+                  totalPrice:
+                    type: number
+                    example: 68
+                  totalCartPrice:
+                    type: number
+                    example: 68
+        '422':
+          description: Invalid product id.
+        '401':
+          description: Authorization error.
+        '404':
+          description: Update error.
+        '500':
+          description: Internal server error.
+    delete:
+      tags:
+        - cart
+      summary: Delete product from cart
+      description: Find the product by ID and delete it from the database.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                  example: 734zhfhftzhtghgj9375g
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    example: 45ztfdtuzhgf874z
+                  productId:
+                    type: string
+                    example: 734zhfhftzhtghgj9375g
+                  quantity:
+                    type: number
+                    example: 2
+                  unitPrice:
+                    type: number
+                    example: 34
+                  totalPrice:
+                    type: number
+                    example: 68
+                  totalCartPrice:
+                    type: number
+                    example: 68"
+        '401':
+          description: Authorization error.
+        '404':
+          description: Cart not found.
+        '422':
+          description: ID validation error.
+        '500':
+          description: Internal server error.
+  /order:
+    post:
+      tags:
+        - order
+      summary: Create a new order
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                OrderFormData:
+                  type: object
+                  properties:
+                    invoiceAddress:
+                      type: object
+                      properties:
+                        zipCode:
+                          type: string
+                          example: 1065
+                        city:
+                          type: string
+                          example: Budapest
+                        street:
+                          type: string
+                          example: Rózsa utca
+                        houseNumber:
+                          type: string
+                          example: 20
+                        country:
+                          type: string
+                          example: Hungary
+                    deliveryAddress:
+                      type: object
+                      properties:
+                        zipCode:
+                          type: string
+                          example: 1065
+                        city:
+                          type: string
+                          example: Budapest
+                        street:
+                          type: string
+                          example: Rózsa utca
+                        houseNumber:
+                          type: string
+                          example: 20
+                        country:
+                          type: string
+                          example: Hungary
+                    details:
+                      type: object
+                      properties:
+                        phoneNumber:
+                          type: string
+                          example: +1 555-1234
+                        deliveryOption:
+                          type: string
+                          example: 1
+                        paymentMethod:
+                          type: string
+                          example: 1
+      responses:
+        '201':
+          description: Order saved.
+        '401':
+          description: Authorization error.
+        '404':
+          description: Order error.
+        '500':
+          description: Internal server error.
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Get all categories.
+      description: Returns a list of all categories.
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '404':
+          description: There are no categories.
+        '500':
+          description: Internal server error.
+  /category:
+    get:
+      tags:
+        - category
+      summary: Get all products that belong to the given category.
+      description: Returns a list of all products that belong to the given category.
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Category not found.
+        '404':
+          description: There are no products in this category.
+        '500':
+          description: Internal server error.
+  /login:
+    post:
+      tags:
+        - login
+      summary: Login with Google.
+      description: Returns a token if the user logged in successfully. Logging in first, saves the user into the database.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: zhhfv74hfd5349fjhhd547fdhfr843z9346rt4gb
+      responses:
+        '200':
+          description: Logged in successfully, returns the session token.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: eyJhzfdhgzfhue734zuhjhfg874ghX.eyJhuzefihijhfe73hu37efhjrfgQ.7634hgf876t4zefggzu4tf87fzg4uzgugrgfug
+        '401':
+          description: Invalid code.
+        '500':
+          description: Internal server error.
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: hdgdgwuw7353hhf93hfhfz6
+        userId:
+          $ref: '#/components/schemas/User'
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                $ref: '#/components/schemas/Product'
+              quantity:
+                type: number
+                example: 2
+              unitPrice:
+                type: number
+                example: 5.99
+              totalPrice:
+                type: number
+                example: 11.98
+        totalCartPrice:
+          type: number
+          example: 14.97
+    Category:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: hdgdgwuw7353hhf93hfhfz6
+        name:
+          type: string
+          example: Blush
+        ufUrl:
+          type: string
+          example: blush
+        rawName:
+          type: string
+          example: blush
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: hdgdgwuw7353hhf93hfhfz6
+        userId:
+          $ref: '#/components/schemas/User'
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                $ref: '#/components/schemas/Product'
+              unitPrice:
+                type: number
+                description: The unit price of the product.
+                example: 10.99
+              quantity:
+                type: number
+                description: The quantity of the product.
+                example: 2
+              totalPrice:
+                type: number
+                description: The total price of the product.
+                example: 21.98
+        totalOrderPrice:
+          type: number
+          description: The total price of the order.
+          example: 21.98
+        invoiceAddress:
+          type: object
+          description: The address where the invoice will be sent.
+          properties:
+            zipCode:
+              type: string
+              example: '1065'
+            city:
+              type: string
+              example: 'Budapest'
+            street:
+              type: string
+              example: 'Rózsa utca'
+            houseNumber:
+              type: string
+              example: '20'
+            country:
+              type: string
+              example: 'Hungary'
+        deliveryAddress:
+          type: object
+          description: The address where the order will be delivered.
+          properties:
+            zipCode:
+              type: string
+              example: '1065'
+            city:
+              type: string
+              example: 'Budapest'
+            street:
+              type: string
+              example: 'Rózsa utca'
+            houseNumber:
+              type: string
+              example: '20'
+            country:
+              type: string
+              example: 'Hungary'
+        details:
+          type: object
+          description: Additional details of the order.
+          properties:
+            phoneNumber:
+              type: string
+              example: '+1 555-1234'
+            deliveryOption:
+              type: number
+              example: 1
+              description: The delivery option selected by the user.
+            paymentMethod:
+              type: number
+              example: 2
+              description: The payment method selected by the user.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the order was created.
+          example: '2023-05-01T10:00:00.000Z'
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: hdgdgwuw7353hhf93hfhfz6
+        id:
+          type: number
+          example: 123
+        brand:
+          type: string
+          example: maybelline
+        name:
+          type: string
+          example: Maybelline Volum'Express the Falsies Mascara
+        price:
+          type: number
+          example: 19.99
+        price_sign:
+          type: string
+          example: €
+        currency:
+          type: string
+          example: EURO
+        description:
+          type: string
+          example: Explosive Volume in Rocket Time!
+        rating:
+          type: string
+          example: 4.5
+        category:
+          type: string
+          example: mascara
+        product_type:
+          type: string
+          example: mascara
+        api_featured_image:
+          type: string
+          example: https://example.com/images/product123.jpg
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: hdgdgwuw7353hhf93hfhfz6
+        sub:
+          type: string
+          example: '7363538299363417288'
+        email:
+          type: string
+          example: janedoe@gmail.com
+        name:
+          type: string
+          example: Jane Doe
+        given_name:
+          type: string
+          example: Jane
+        picture:
+          type: string
+          example: 'https://googleuser.com'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -69,7 +69,7 @@ const LoginButton: FC = () => {
                 Wishlist
               </a>
               <a
-                href={'#'}
+                href={'/'}
                 onClick={() => {
                   logout();
                   toastCall();

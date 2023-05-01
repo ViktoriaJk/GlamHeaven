@@ -34,25 +34,33 @@ describe('GET /api/category/:url', () => {
     });
     await Product.create([
       {
+        id: 1,
         name: 'NARS Afterglow Lip Balm',
+        brand: 'NARS',
         api_featured_image: 'www.lookfantastic/nars/afterglow.com',
         price: 7,
-        price_sign: '$',
+        price_sign: '€',
+        currency: 'EURO',
+        product_type: 'lip_balm',
       },
 
       {
+        id: 2,
         name: 'LANEIGE Lip Sleeping Mask',
+        brand: 'LANEIGE',
         api_featured_image: 'www.lookfantastic/laneige/sleepingmask.com',
         price: 8,
-        price_sign: '$',
+        price_sign: '€',
+        currency: 'EURO',
+        product_type: 'lip_balm',
       },
     ]);
     // when
-    const response = await request(app).get('/api/category/:ufUrl');
+    const response = await request(app).get('/api/category/lip-balm');
     // then
-    const dbContent = await Product.find({});
+    const dbContent = await Product.find();
     expect(dbContent).toHaveLength(2);
-    expect(response.body.length).toBe(2);
+    expect(response.body.products.length).toBe(2);
     expect(response.status).toBe(200);
   });
 });

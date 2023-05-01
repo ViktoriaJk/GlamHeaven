@@ -54,7 +54,6 @@ const orderSchema = new Schema({
       required: true,
     },
   },
-
   deliveryAddress: {
     zipCode: {
       type: String,
@@ -77,7 +76,6 @@ const orderSchema = new Schema({
       required: true,
     },
   },
-
   details: {
     phoneNumber: {
       type: String,
@@ -92,7 +90,6 @@ const orderSchema = new Schema({
       required: true,
     },
   },
-
   createdAt: {
     type: Date,
     default: Date.now,

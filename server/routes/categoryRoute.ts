@@ -9,7 +9,7 @@ router.get('/:url', async (req: Request, res: Response) => {
 
   const category = await Category.findOne({ ufUrl: url });
   if (!category) {
-    return res.status(404).json('Category not found.');
+    return res.status(400).json('Category not found.');
   } else {
     const categoryProducts = await Product.find({
       product_type: category.rawName,

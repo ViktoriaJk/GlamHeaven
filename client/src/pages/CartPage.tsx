@@ -5,6 +5,7 @@ import useApi from '../hooks/useApi';
 import Loader from '../components/Loader';
 import { deleteFromCart } from '../api/cart';
 import { saveOrder } from '../api/order';
+import toast, { Toaster } from 'react-hot-toast';
 //import { $user } from '../states/user';
 //import useGlobal from '../hooks/useGlobal';
 
@@ -92,6 +93,7 @@ const CartPage = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     saveOrder(formValues);
+    toast.success('Thank you for your order!');
   };
 
   //const [cartProducts, setCartProducts] = useState(cartData || '');
@@ -311,8 +313,15 @@ const CartPage = () => {
           )}
         </>
       ) : (
-        <div>{error ? <p>{error}</p> : <p>No products.</p>}</div>
+        <div>
+          {error ? (
+            <p>{error}</p>
+          ) : (
+            <p>There are currently no items in your cart.</p>
+          )}
+        </div>
       )}
+      <Toaster />
     </>
   );
 };

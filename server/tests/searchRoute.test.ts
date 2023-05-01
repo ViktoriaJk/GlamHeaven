@@ -24,16 +24,24 @@ describe('GET /api/search/:query', () => {
   it('should return status 200 and products matching the search query', async () => {
     // given
     await Product.create({
+      id: 1,
       name: 'NARS Afterglow Lip Balm',
+      brand: 'NARS',
       api_featured_image: 'www.lookfantastic/nars/afterglow.com',
       price: 7,
-      price_sign: '$',
+      price_sign: '€',
+      currency: 'EURO',
+      product_type: 'lip-balm',
     });
     await Product.create({
+      id: 2,
       name: 'LANEIGE Lip Sleeping Mask',
+      brand: 'LANEIGE',
       api_featured_image: 'www.lookfantastic/laneige/sleepingmask.com',
       price: 8,
-      price_sign: '$',
+      price_sign: '€',
+      currency: 'EURO',
+      product_type: 'lip-balm',
     });
     // when
     const response = await request(app).get('/api/search/lip');
@@ -47,10 +55,14 @@ describe('GET /api/search/:query', () => {
   it('should return status 404 if no products match the search query', async () => {
     // given
     await Product.create({
+      id: 1,
       name: 'NARS Afterglow Lip Balm',
+      brand: 'NARS',
       api_featured_image: 'www.lookfantastic/nars/afterglow.com',
       price: 7,
-      price_sign: '$',
+      price_sign: '€',
+      currency: 'EURO',
+      product_type: 'lip-balm',
     });
     // when
     const response = await request(app).get('/api/search/mask');

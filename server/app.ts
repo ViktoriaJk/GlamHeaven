@@ -23,8 +23,8 @@ app.use('/api/categories/', categoriesRoutes);
 app.use('/api/category/', categoryRoutes);
 app.use('/api/cart/', cartRoutes);
 app.use('/api/order/', orderRoutes);
-app.use('/api/user/', userRoutes);
 app.use('/api/search/', searchRoutes);
+app.use('/api/user/', userRoutes);
 app.use('/api/secret/', secret);
 
 app.use((req, res, next) => {

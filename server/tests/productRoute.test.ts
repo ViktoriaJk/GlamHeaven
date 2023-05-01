@@ -26,10 +26,14 @@ describe('GET /api/product/:id', () => {
   it('should return status 200 and one product', async () => {
     // given
     const product = await Product.create({
+      id: 1,
       name: 'NARS Afterglow Lip Balm',
+      brand: 'NARS',
       api_featured_image: 'www.lookfantastic/nars/afterglow.com',
       price: 7,
-      price_sign: '$',
+      price_sign: '€',
+      currency: 'EURO',
+      product_type: 'lip-balm',
     });
     // when
     const response = await request(app).get(`/api/product/${product._id}`);
@@ -43,10 +47,14 @@ describe('GET /api/product/:id', () => {
   it('should return status 422 if the product id is invalid', async () => {
     // given
     await Product.create({
+      id: 2,
       name: 'LANEIGE Lip Sleeping Mask',
+      brand: 'LANEIGE',
       api_featured_image: 'www.lookfantastic/laneige/sleepingmask.com',
       price: 8,
-      price_sign: '$',
+      price_sign: '€',
+      currency: 'EURO',
+      product_type: 'lip-balm',
     });
     // when
     const response = await request(app).get('/api/product/12345678910');
