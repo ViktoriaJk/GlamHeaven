@@ -43,8 +43,6 @@ router.get('/', verifyToken, async (req: Request, res: Response) => {
   const user = res.locals.user as UserVType;
   const foundUser = await User.findById(user._id);
 
-  console.log(user);
-
   if (!foundUser) {
     return res.status(400).json({ message: 'User not found.' });
   }
@@ -138,7 +136,8 @@ router.post(
             products: foundCart.products,
             totalCartPrice: totalCartPrice,
           },
-        }
+        },
+        { new: true }
       );
       if (cart) {
         return res.status(200).json(cart);
@@ -181,9 +180,20 @@ router.delete(
         foundCart.products.splice(productInCartIndex, 1); // 2nd parameter means remove one item only
       }
 
+      let totalCartPrice = 0;
+      totalCartPrice = foundCart.products.reduce(
+        (accumulator, currentValue) => accumulator + currentValue.totalPrice,
+        totalCartPrice
+      );
+
       const cart = await Cart.findOneAndUpdate<Cart>(
         { userId: user._id },
-        { $set: { products: foundCart.products } }
+        {
+          $set: {
+            products: foundCart.products,
+            totalCartPrice: totalCartPrice,
+          },
+        }
       );
       if (cart) {
         return res.status(200).json(cart);
@@ -194,44 +204,5 @@ router.delete(
     res.sendStatus(400);
   }
 );
-
-// UPDATE ITEM
-/*
-router.put('/', verifyToken, async (req: Request, res: Response) => {
-  const user = res.locals.user;
-  const foundUser = await User.findById(user._id);
-
-  if (!foundUser) {
-    return res.status(400).json({ message: 'User not found.' });
-  }
-
-  const { productId, quantity } = req.body as CartProducts;
-
-  if (!mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(422).json('Invalid product id.');
-  }
-
-  const foundCart = await Cart.findOne({ userId: user._id });
-  if (foundCart) {
-    const productInCartIndex = foundCart.products.findIndex(
-      (prod) => prod.productId === productId
-    );
-
-    if (productInCartIndex > -1) {
-      if (quantity === 0) {
-        foundCart.products.splice(productInCartIndex, 1);
-      } else {
-        foundCart.products[productInCartIndex].quantity = quantity;
-      }
-    }
-
-    const cart = await Cart.findOneAndUpdate<Cart>(
-      { userId: user._id },
-      { $set: { products: foundCart.products } }
-    );
-    return res.status(200).json(cart);
-  }
-  res.sendStatus(400);
-});*/
 
 export default router;

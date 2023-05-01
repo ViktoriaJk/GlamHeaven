@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FC, ReactNode } from 'react';
-import type { CartType } from '../api/cart';
-import { getCart } from '../api/cart';
+import { getCart, CartType, addToCart } from '../api/cart';
 import useApi from '../hooks/useApi';
 import Loader from '../components/Loader';
 import { deleteFromCart } from '../api/cart';
@@ -63,8 +62,13 @@ const CartPage = () => {
 
   //const user = useGlobal($user);
 
-  const removeCartItemHandler = (id: string) => {
-    deleteFromCart(id);
+  const removeCartItemHandler = async (id: string) => {
+    await deleteFromCart(id);
+    reload();
+  };
+
+  const changeCartItemQuantity = async (id: string, quantity: number) => {
+    await addToCart(id, quantity);
     reload();
   };
 
@@ -77,7 +81,7 @@ const CartPage = () => {
   ) => {
     const { name, value } = e.target;
     const [field, subField] = name.split('.');
-    console.log(e.target);
+    //console.log(e.target);
 
     setFormValues((prevValues: any) => ({
       ...prevValues,
@@ -90,6 +94,8 @@ const CartPage = () => {
     saveOrder(formValues);
   };
 
+  //const [cartProducts, setCartProducts] = useState(cartData || '');
+
   return (
     <>
       {cartData ? (
@@ -98,11 +104,45 @@ const CartPage = () => {
           {loading && <Loader />}
           <div>
             {cartData.products.map((product) => (
-              <div key={product.productId._id}>
-                <a href={`/product/${product.productId._id}`}>
-                  {product.productId.name}
-                  {product.quantity}
+              <div className='cart_row'>
+                <a
+                  href={`/product/${product.productId._id}`}
+                  key={product.productId._id}
+                  className='product_row'>
+                  <div className='product_row_image'>
+                    <img
+                      src={product.productId.api_featured_image}
+                      alt='product image'
+                    />
+                  </div>
+                  <div className='product_row_name'>
+                    {product.productId.name}
+                  </div>
                 </a>
+                <div className='product_row_quantity'>
+                  <div
+                    className='button'
+                    onClick={() => {
+                      changeCartItemQuantity(product.productId._id, -1);
+                    }}>
+                    -
+                  </div>
+                  <div className='product_row_quantity_current'>
+                    {product.quantity}
+                  </div>
+                  <div
+                    className='button'
+                    onClick={() => {
+                      changeCartItemQuantity(product.productId._id, 1);
+                    }}>
+                    +
+                  </div>
+                </div>
+                <div className='product_row_price'>
+                  {product.productId.price_sign}
+                  {product.totalPrice}
+                </div>
+
                 <div
                   className='button'
                   onClick={() => removeCartItemHandler(product.productId._id)}>
@@ -111,9 +151,10 @@ const CartPage = () => {
               </div>
             ))}
           </div>
+          <div>€{cartData.totalCartPrice}</div>
           {!viewOrderForm ? (
             <div className='button' onClick={() => setViewOrderForm(true)}>
-              Order
+              ORDER
             </div>
           ) : (
             <div>

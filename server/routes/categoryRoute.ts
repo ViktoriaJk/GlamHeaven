@@ -20,7 +20,7 @@ router.get('/:url', async (req: Request, res: Response) => {
         products: categoryProducts,
       });
     } else {
-      return res.status(404).json('There are no product in this category.');
+      return res.status(404).json('There are no products in this category.');
     }
   }
 });

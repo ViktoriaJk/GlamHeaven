@@ -14,7 +14,7 @@ Endpoints:
 - /api/categories => GET ✔
 - /api/category/:url => GET ✔
 
-- /api/cart/ => GET, POST, DELETE, PUT (termék száma) ✔
+- /api/cart/ => GET, POST, DELETE, PUT? (termék száma) ✔
 
 - /api/order => POST
 

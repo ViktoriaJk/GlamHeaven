@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config({
-  path: '../.env',
-});
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
 import { getIdToken } from '../api/google';
@@ -39,7 +35,7 @@ router.post(
   async (req: Request, res: Response) => {
     const loginRequest = req.body as LoginRequest;
     const idToken = await getIdToken(loginRequest.code);
-    console.log('idToken: ', idToken);
+    //console.log('idToken: ', idToken);
     if (!idToken) {
       return res.status(401).json({ error: 'Invalid code' });
     }
@@ -62,7 +58,7 @@ router.post(
         expiresIn: '5h',
       });
 
-      console.log('sessionToken', sessionToken);
+      //console.log('sessionToken', sessionToken);
       return res.json({ token: sessionToken });
     } else {
       const result2 = { ...result, _id: foundUser._id }; ////
@@ -70,7 +66,7 @@ router.post(
         expiresIn: '5h',
       });
 
-      console.log('sessionToken', sessionToken);
+      //console.log('sessionToken', sessionToken);
       return res.json({ token: sessionToken });
     }
   }

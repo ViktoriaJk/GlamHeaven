@@ -9,7 +9,7 @@ import categoryRoutes from './routes/categoryRoute';
 import cartRoutes from './routes/cartRoute';
 import orderRoutes from './routes/orderRoute';
 import searchRoutes from './routes/searchRoute';
-import userWishlistRoutes from './routes/userWishlistRoute';
+import userRoutes from './routes/userRoute';
 import secret from './routes/secret';
 
 const app: Express = express();
@@ -23,7 +23,7 @@ app.use('/api/categories/', categoriesRoutes);
 app.use('/api/category/', categoryRoutes);
 app.use('/api/cart/', cartRoutes);
 app.use('/api/order/', orderRoutes);
-app.use('/api/user/wishlist', userWishlistRoutes);
+app.use('/api/user/', userRoutes);
 app.use('/api/search/', searchRoutes);
 app.use('/api/secret/', secret);
 

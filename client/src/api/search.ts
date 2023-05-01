@@ -6,8 +6,8 @@ const SearchProductListSchema = z
     name: z.string(),
     _id: z.string(),
     api_featured_image: z.string(),
-    price: z.number().nullable().optional(),
-    price_sign: z.string().nullable().optional(),
+    price: z.number().nullable(),
+    price_sign: z.string().nullable(),
   })
   .array();
 

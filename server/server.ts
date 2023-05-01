@@ -34,14 +34,15 @@ app.listen(port, () => {
 
 /*
   //build products and categories collection
-
+*/
+/*
 import { Product } from './models/Product';
 import productsData from './data/products.json';
 
 Product.insertMany(productsData);
-console.log(productsData);*/
+console.log(productsData);
 
-/*import { Category } from './models/Category';
+import { Category } from './models/Category';
 import categoriesData from './data/categories.json';
 
 Category.insertMany(categoriesData);

@@ -39,31 +39,21 @@ type deleteFromCartType = z.infer<typeof deleteFromCartSchema>;
 
 //GET CART CONTENT
 
-router.get('/', verifyToken, async (req: Request, res: Response) => {
+router.get('/wishlist', verifyToken, async (req: Request, res: Response) => {
   const user = res.locals.user as UserVType;
   const foundUser = await User.findById(user._id);
 
-  console.log(user);
-
   if (!foundUser) {
     return res.status(400).json({ message: 'User not found.' });
-  }
-
-  const foundCart = await Cart.findOne({ userId: user._id }).populate(
-    'products.productId',
-    'name price price_sign api_featured_image'
-  );
-  if (foundCart) {
-    res.status(200).json(foundCart);
   } else {
-    return res.status(404).json({ message: 'Your cart is empty.' });
+    return res.status(200).json(foundUser.favourites);
   }
 });
 
 // ADD ITEM
 
 router.post(
-  '/',
+  '/wishlist',
   verifySchema(productSchema),
   verifyToken,
   async (req: Request, res: Response) => {
@@ -85,37 +75,12 @@ router.post(
       return res.status(422).json('Invalid product id.');
     }
 
-    const foundCart = await Cart.findOne({ userId: user._id });
-    console.log('ok');
-    if (!foundCart) {
-      const totalprice = quantity * foundProduct.price;
-      const cart = await Cart.create<Cart>({
-        userId: user._id,
-        products: [
-          {
-            productId: productId,
-            quantity: quantity,
-            unitPrice: foundProduct.price,
-            totalPrice: totalprice,
-          },
-        ],
-      });
-      return res.status(200).json(cart);
-    } else {
-      const productInCartIndex = foundCart.products.findIndex(
-        (prod) => prod.productId == productId
-      );
+    if (foundUser.favourites.includes(productId)) {
+        
+    }
 
-      if (productInCartIndex > -1) {
-        const totalprice =
-          (foundCart.products[productInCartIndex].quantity + quantity) *
-          foundProduct.price;
-        foundCart.products[productInCartIndex].quantity += quantity;
-        foundCart.products[productInCartIndex].totalPrice = totalprice;
-      } else {
-        const totalprice = quantity * foundProduct.price;
-        foundCart.products = [
-          ...foundCart.products,
+        foundUser.favourites = [
+          ...foundUser.favourites,
           {
             productId: productId,
             quantity: quantity,
@@ -123,11 +88,23 @@ router.post(
             totalPrice: totalprice,
           },
         ];
+
       }
+
+      let totalCartPrice = 0;
+      totalCartPrice = foundCart.products.reduce(
+        (accumulator, currentValue) => accumulator + currentValue.totalPrice,
+        totalCartPrice
+      );
 
       const cart = await Cart.findOneAndUpdate<Cart>(
         { userId: user._id },
-        { $set: { products: foundCart.products } }
+        {
+          $set: {
+            products: foundCart.products,
+            totalCartPrice: totalCartPrice,
+          },
+        }
       );
       if (cart) {
         return res.status(200).json(cart);

@@ -8,6 +8,7 @@ const productSchema = new Schema({
   },
   brand: {
     type: String,
+    required: true,
   },
   name: {
     type: String,
@@ -23,24 +24,13 @@ const productSchema = new Schema({
   },
   currency: {
     type: String,
-  },
-  image_link: {
-    type: String,
-    required: true,
-  },
-  product_link: {
-    type: String,
-    required: true,
-  },
-  website_link: {
-    type: String,
     required: true,
   },
   description: {
     type: String,
   },
   rating: {
-    type: Number,
+    type: String,
   },
   category: {
     type: String,
@@ -49,33 +39,10 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
-  tag_list: [String],
-  created_at: {
-    type: Date,
-    required: true,
-  },
-  updated_at: {
-    type: Date,
-    required: true,
-  },
-  product_api_url: {
-    type: String,
-    required: true,
-  },
   api_featured_image: {
     type: String,
     required: true,
   },
-  product_colors: [
-    {
-      hex_value: {
-        type: String,
-      },
-      colour_name: {
-        type: String,
-      },
-    },
-  ],
 });
 
 export type ProductType = InferSchemaType<typeof productSchema>;

@@ -65,7 +65,7 @@ router.post(
     });
 
     if (newOrder) {
-      return res.status(200).json({ message: 'OK.' });
+      return res.status(200).json({ message: 'Order saved.' });
     } else {
       return res.status(404).json({ message: 'Order error.' });
     }

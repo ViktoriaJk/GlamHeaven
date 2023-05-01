@@ -20,6 +20,8 @@ const productSchema = z.object({
     api_featured_image: z.string(),
   }),
   quantity: z.number(),
+  totalPrice: z.number(),
+  unitPrice: z.number(),
 });
 
 const CartSchema = z.object({

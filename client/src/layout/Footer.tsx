@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
 const Footer: FC = () => {
-  return <footer>123</footer>;
+  return <footer>GlamHeaven 2023</footer>;
 };
 
 export default Footer;
