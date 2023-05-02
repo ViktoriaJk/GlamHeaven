@@ -27,8 +27,8 @@ const orderFormDataSchema = z.object({
     }),
     details: z.object({
       phoneNumber: z.string().nonempty(),
-      deliveryOption: z.string().nonempty(),
-      paymentMethod: z.string().nonempty(),
+      deliveryOption: z.string().default('1'),
+      paymentMethod: z.string().default('1'),
     }),
   }),
 });

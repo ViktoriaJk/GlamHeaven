@@ -122,26 +122,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  userId:
-                    type: string
-                    example: 45ztfdtuzhgf874z
-                  productId:
-                    type: string
-                    example: 734zhfhftzhtghgj9375g
-                  quantity:
-                    type: number
-                    example: 2
-                  unitPrice:
-                    type: number
-                    example: 34
-                  totalPrice:
-                    type: number
-                    example: 68
-                  totalCartPrice:
-                    type: number
-                    example: 68
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
         '422':
           description: Invalid product id.
         '401':
@@ -172,26 +155,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  userId:
-                    type: string
-                    example: 45ztfdtuzhgf874z
-                  productId:
-                    type: string
-                    example: 734zhfhftzhtghgj9375g
-                  quantity:
-                    type: number
-                    example: 2
-                  unitPrice:
-                    type: number
-                    example: 34
-                  totalPrice:
-                    type: number
-                    example: 68
-                  totalCartPrice:
-                    type: number
-                    example: 68"
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
         '401':
           description: Authorization error.
         '404':
@@ -292,12 +258,19 @@ paths:
           description: There are no categories.
         '500':
           description: Internal server error.
-  /category:
+  /category/{url}:
     get:
       tags:
         - category
       summary: Get all products that belong to the given category.
       description: Returns a list of all products that belong to the given category.
+      parameters:
+        - name: url
+          in: path
+          description: The URL of the category to retrieve
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: OK.
@@ -419,7 +392,7 @@ components:
           example: 21.98
         invoiceAddress:
           type: object
-          description: The address where the invoice will be sent.
+          description: The invoice address provided by the user.
           properties:
             zipCode:
               type: string
