@@ -44,13 +44,13 @@ router.post(
     const foundUser = await User.findById(user._id);
 
     if (!foundUser) {
-      return res.status(400).json({ message: 'User not found.' });
+      return res.status(400).json('User not found.');
     }
 
     const foundCart = await Cart.findOne({ userId: user._id });
 
     if (!foundCart) {
-      return res.status(400).json({ message: 'Cart not found.' });
+      return res.status(400).json('Cart not found.');
     }
 
     const orderData = req.body.orderFormData;
@@ -58,16 +58,17 @@ router.post(
     const newOrder = await Order.create({
       userId: user._id,
       products: foundCart.products,
-      totalOrderPrice: 0,
+      totalOrderPrice: foundCart.totalCartPrice,
       invoiceAddress: orderData.invoiceAddress,
       deliveryAddress: orderData.deliveryAddress,
       details: orderData.details,
     });
 
-    if (newOrder) {
-      return res.status(200).json({ message: 'Order saved.' });
+    const deleteCart = await Cart.deleteOne({ userId: user._id });
+    if (newOrder && deleteCart) {
+      return res.status(200).json('Order saved.');
     } else {
-      return res.status(404).json({ message: 'Order error.' });
+      return res.status(404).json('Order error.');
     }
   }
 );

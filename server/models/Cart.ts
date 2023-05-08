@@ -27,6 +27,9 @@ const cartSchema = new Schema({
       },
       totalPrice: {
         type: Number,
+        get: (v: number) => Math.round((v + Number.EPSILON) * 100) / 100,
+        set: (v: number) => Math.round((v + Number.EPSILON) * 100) / 100,
+        alias: 'i',
         default: 0,
         required: true,
       },
@@ -34,6 +37,9 @@ const cartSchema = new Schema({
   ],
   totalCartPrice: {
     type: Number,
+    get: (v: number) => Math.round((v + Number.EPSILON) * 100) / 100,
+    set: (v: number) => Math.round((v + Number.EPSILON) * 100) / 100,
+    alias: 'i',
     required: true,
   },
 });

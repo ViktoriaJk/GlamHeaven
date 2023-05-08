@@ -15,10 +15,10 @@ const CartButton: FC = () => {
   return (
     <>
       <div className='button' onClick={() => navigate('/cart')}>
-        <span>
+        <span className='button_icon'>
           <FaShoppingCart />
         </span>
-        Cart
+        <span className='button_text'>Cart</span>
       </div>
     </>
   );

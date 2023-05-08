@@ -21,12 +21,12 @@ export const verifyToken = (
   if (!authHeader) return res.status(401).json('Requires authentication');
 
   const token = authHeader.split(' ')[1];
+  if (token === 'null') return res.status(401).json('Requires authentication');
+
   try {
     const verifiedUser = jwt.verify(token, secretKey);
     const result = UserSchema.safeParse(verifiedUser);
     if (result.success === false) return res.sendStatus(401);
-    // !!!!!! zod-dal verify-olni (safeparse) kell, h olyan-e a payload, amit elvar a server
-    //res.locals.user = verifiedUser;
     res.locals.user = result.data;
     next();
   } catch (error) {

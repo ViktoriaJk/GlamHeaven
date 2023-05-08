@@ -90,10 +90,11 @@ const CartPage = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    saveOrder(formValues);
+    await saveOrder(formValues);
     toast.success('Thank you for your order!');
+    reload();
   };
 
   //const [cartProducts, setCartProducts] = useState(cartData || '');
@@ -106,7 +107,7 @@ const CartPage = () => {
           {loading && <Loader />}
           <div>
             {cartData.products.map((product) => (
-              <div className='cart_row'>
+              <div className='cart_row' key={product.productId._id}>
                 <a
                   href={`/product/${product.productId._id}`}
                   key={product.productId._id}
@@ -121,6 +122,10 @@ const CartPage = () => {
                     {product.productId.name}
                   </div>
                 </a>
+                <div className='product_row_price'>
+                  {product.productId.price_sign}
+                  {product.unitPrice}
+                </div>
                 <div className='product_row_quantity'>
                   <div
                     className='button'
@@ -140,136 +145,138 @@ const CartPage = () => {
                     +
                   </div>
                 </div>
-                <div className='product_row_price'>
-                  {product.productId.price_sign}
+                <div className='product_row_subtotalprice'>
+                  Subtotal: {product.productId.price_sign}
                   {product.totalPrice}
                 </div>
 
                 <div
-                  className='button'
+                  className='button product_row_remove'
                   onClick={() => removeCartItemHandler(product.productId._id)}>
                   REMOVE
                 </div>
               </div>
             ))}
           </div>
-          <div>€{cartData.totalCartPrice}</div>
+          <div className='cart_total'>
+            Cart Total: €{cartData.totalCartPrice}
+          </div>
           {!viewOrderForm ? (
-            <div className='button' onClick={() => setViewOrderForm(true)}>
-              ORDER
-            </div>
+            <>
+              <div className='order_row'>
+                <div className='button' onClick={() => setViewOrderForm(true)}>
+                  <span className='button_text'>ORDER</span>
+                </div>
+              </div>
+            </>
           ) : (
-            <div>
-              <form onSubmit={handleSubmit}>
-                <div>
+            <form onSubmit={handleSubmit}>
+              <div className='order_details'>
+                <div className='order_details_block'>
                   <h2>Invoice Address</h2>
-                  <label>
-                    Zip Code:
-                    <input
-                      type='text'
-                      name='invoiceAddress.zipCode'
-                      value={formValues.invoiceAddress.zipCode}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    City:
-                    <input
-                      type='text'
-                      name='invoiceAddress.city'
-                      value={formValues.invoiceAddress.city}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Street:
-                    <input
-                      type='text'
-                      name='invoiceAddress.street'
-                      value={formValues.invoiceAddress.street}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    House Number:
-                    <input
-                      type='text'
-                      name='invoiceAddress.houseNumber'
-                      value={formValues.invoiceAddress.houseNumber}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Country:
-                    <input
-                      type='text'
-                      name='invoiceAddress.country'
-                      value={formValues.invoiceAddress.country}
-                      onChange={handleChange}
-                    />
-                  </label>
+                  <label>Zip Code:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='invoiceAddress.zipCode'
+                    value={formValues.invoiceAddress.zipCode}
+                    onChange={handleChange}
+                  />
+
+                  <label>City:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='invoiceAddress.city'
+                    value={formValues.invoiceAddress.city}
+                    onChange={handleChange}
+                  />
+
+                  <label>Street:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='invoiceAddress.street'
+                    value={formValues.invoiceAddress.street}
+                    onChange={handleChange}
+                  />
+
+                  <label>House Number:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='invoiceAddress.houseNumber'
+                    value={formValues.invoiceAddress.houseNumber}
+                    onChange={handleChange}
+                  />
+
+                  <label>Country:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='invoiceAddress.country'
+                    value={formValues.invoiceAddress.country}
+                    onChange={handleChange}
+                  />
                 </div>
-                <div>
+                <div className='order_details_block'>
                   <h2>Delivery Address</h2>
-                  <label>
-                    Zip Code:
-                    <input
-                      type='text'
-                      name='deliveryAddress.zipCode'
-                      value={formValues.deliveryAddress.zipCode}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    City:
-                    <input
-                      type='text'
-                      name='deliveryAddress.city'
-                      value={formValues.deliveryAddress.city}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Street:
-                    <input
-                      type='text'
-                      name='deliveryAddress.street'
-                      value={formValues.deliveryAddress.street}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    House Number:
-                    <input
-                      type='text'
-                      name='deliveryAddress.houseNumber'
-                      value={formValues.deliveryAddress.houseNumber}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Country:
-                    <input
-                      type='text'
-                      name='deliveryAddress.country'
-                      value={formValues.deliveryAddress.country}
-                      onChange={handleChange}
-                    />
-                  </label>
+                  <label>Zip Code:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='deliveryAddress.zipCode'
+                    value={formValues.deliveryAddress.zipCode}
+                    onChange={handleChange}
+                  />
+
+                  <label>City:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='deliveryAddress.city'
+                    value={formValues.deliveryAddress.city}
+                    onChange={handleChange}
+                  />
+
+                  <label>Street:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='deliveryAddress.street'
+                    value={formValues.deliveryAddress.street}
+                    onChange={handleChange}
+                  />
+
+                  <label>House Number:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='deliveryAddress.houseNumber'
+                    value={formValues.deliveryAddress.houseNumber}
+                    onChange={handleChange}
+                  />
+
+                  <label>Country:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='deliveryAddress.country'
+                    value={formValues.deliveryAddress.country}
+                    onChange={handleChange}
+                  />
                 </div>
-                <div>
+                <div className='order_details_block'>
                   <h2>Contact Details</h2>
-                  <label>
-                    Phone Number:
-                    <input
-                      type='text'
-                      name='details.phoneNumber'
-                      value={formValues.details.phoneNumber}
-                      onChange={handleChange}
-                    />
-                  </label>
-                </div>
-                <div>
+                  <label>Phone Number:</label>
+                  <input
+                    type='text'
+                    className='inputbox'
+                    name='details.phoneNumber'
+                    value={formValues.details.phoneNumber}
+                    onChange={handleChange}
+                  />
+
                   <h2>Delivery Options</h2>
                   <label>
                     <input
@@ -291,12 +298,11 @@ const CartPage = () => {
                     />
                     Option 2
                   </label>
-                </div>
-                <div>
                   <h2>Payment Method</h2>
                   <label>
                     <select
                       name='details.paymentMethod'
+                      className='inputbox'
                       value={formValues.details.paymentMethod}
                       onChange={handleChange}>
                       <option value='0'>Method 1</option>
@@ -305,21 +311,17 @@ const CartPage = () => {
                     </select>
                   </label>
                 </div>
+              </div>
+              <div className='order_row_end'>
                 <button type='submit' className='button'>
-                  ORDER
+                  <span className='button_text'>ORDER</span>
                 </button>
-              </form>
-            </div>
+              </div>
+            </form>
           )}
         </>
       ) : (
-        <div>
-          {error ? (
-            <p>{error}</p>
-          ) : (
-            <p>There are currently no items in your cart.</p>
-          )}
-        </div>
+        <div>{error && <p>There are currently no items in your cart.</p>}</div>
       )}
       <Toaster />
     </>

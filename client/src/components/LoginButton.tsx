@@ -25,10 +25,10 @@ const LoginButton: FC = () => {
     <>
       {!user ? (
         <a href={url} className='button'>
-          <span>
+          <span className='button_icon'>
             <FaUserCircle />
           </span>
-          LOGIN
+          <span className='button_text'>LOGIN</span>
         </a>
       ) : (
         <>
@@ -37,7 +37,7 @@ const LoginButton: FC = () => {
               onMouseOver={() => setIsShown(true)}
               onClick={() => setIsShown(!isShown)}
               className='button'>
-              <span>
+              <span className='button_icon'>
                 <img
                   src={user.picture}
                   alt='avatar'
@@ -45,7 +45,7 @@ const LoginButton: FC = () => {
                   referrerPolicy='no-referrer'
                 />
               </span>
-              {user.given_name}
+              <span className='button_text'>{user.given_name}</span>
             </div>
             <div
               onMouseLeave={() => setIsShown(false)}

@@ -16,9 +16,8 @@ const productSchema = z.object({
     .string()
     .nonempty({ message: 'The product id is required.' })
     .transform((val) => new ObjectId(val)),
-  quantity: z
-    .number()
-    .positive({ message: 'The quantity must be positive number.' }),
+  quantity: z.number(),
+  //.positive({ message: 'The quantity must be positive number.' }),
 });
 
 const CartSchema = z.object({
@@ -52,10 +51,10 @@ router.get('/', verifyToken, async (req: Request, res: Response) => {
     'products.productId',
     'name price price_sign api_featured_image'
   );
-  if (foundCart) {
+  if (foundCart && foundCart.products.length > 0) {
     res.status(200).json(foundCart);
   } else {
-    return res.status(404).json({ message: 'Your cart is empty.' });
+    return res.status(404).json('There are currently no items in your cart.');
   }
 });
 
@@ -70,7 +69,7 @@ router.post(
     const foundUser = await User.findById(user._id);
 
     if (!foundUser) {
-      return res.status(400).json({ message: 'User not found.' });
+      return res.status(400).json('User not found.');
     }
 
     const { productId, quantity } = req.body as CartProducts;
@@ -106,11 +105,14 @@ router.post(
       );
 
       if (productInCartIndex > -1) {
-        const totalprice =
+        let totalprice =
           (foundCart.products[productInCartIndex].quantity + quantity) *
           foundProduct.price;
         foundCart.products[productInCartIndex].quantity += quantity;
         foundCart.products[productInCartIndex].totalPrice = totalprice;
+        if (foundCart.products[productInCartIndex].quantity == 0) {
+          foundCart.products.splice(productInCartIndex, 1);
+        }
       } else {
         const totalprice = quantity * foundProduct.price;
         foundCart.products = [
@@ -143,7 +145,7 @@ router.post(
       if (cart) {
         return res.status(200).json(cart);
       } else {
-        return res.status(404).json({ message: 'Update error.' });
+        return res.status(404).json('Update error.');
       }
     }
     res.sendStatus(400);
@@ -161,7 +163,7 @@ router.delete(
     const foundUser = await User.findById(user._id);
 
     if (!foundUser) {
-      return res.status(400).json({ message: 'User not found.' });
+      return res.status(400).json('User not found.');
     }
 
     const { productId } = req.body as deleteFromCartType;
@@ -194,12 +196,13 @@ router.delete(
             products: foundCart.products,
             totalCartPrice: totalCartPrice,
           },
-        }
+        },
+        { new: true }
       );
       if (cart) {
         return res.status(200).json(cart);
       } else {
-        return res.status(404).json({ message: 'Update error.' });
+        return res.status(404).json('Update error.');
       }
     }
     res.sendStatus(400);
